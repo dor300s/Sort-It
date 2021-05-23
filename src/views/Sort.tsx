@@ -5,28 +5,49 @@ import { generateNumbers } from '../services/generateNumbersService';
 import { quickSort } from '../services/quickSortService';
 import { mergeSort } from '../services/mergeSortService';
 import { heapSort } from '../services/heapSortService';
+import { promises } from 'dns';
+import { JsxEmit } from 'typescript';
 
 
-const nums = generateNumbers(10)
-console.log(nums);
+// const nums = generateNumbers(10)
+// console.log(nums);
 // console.log(quickSort(nums));
-console.log(heapSort(nums));
+// console.log(heapSort(nums));
 
 const sortType = 'Bubble Sort';
 
 
 export const Sort = () => {
-    const [numbers, setNumbers] = useState<number[]>([4, 72, 64, 79, 23, 46, 19, 29, 75, 22, 1]);
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [numbers, setNumbers] = useState<number[]>(generateNumbers(50));
+    // const [numbers, setNumbers] = useState<number[]>([5, 3, 7, 12, 2, 8, 4]);
+    const [sorted, setSorted] = useState<string>();
+    const [currentIndex, setCurrentIndex] = useState<number[] | null>([0]);
 
     useEffect(() => {
-        // bubbleSort(numbers, setNumbers, 1000)
-        // bubbleSort(setNumbers, setCurrentIndex, 500);
+        console.log(numbers);
+        setSorted(JSON.stringify([...numbers].sort((a, b) => a - b)));
+
+        // bubbleSort(setNumbers, setCurrentIndex, 5);
+        // quickSort(numbers, 0, numbers.length - 1, setNumbers, setCurrentIndex, 50)
+        mergeSort(numbers, 0, numbers.length, setNumbers, setCurrentIndex, 50);
+
+
+        // [...Array(100)].forEach(() => {
+        //     const numbers = generateNumbers(30);
+        //     console.log(JSON.stringify(mergeSort(numbers, 0, numbers.length, setNumbers, setCurrentIndex, 100)) === JSON.stringify(numbers.sort((a, b) => a - b)))
+        // });
 
     }, [])
 
+    useEffect(() => {
+        if (JSON.stringify(numbers) === sorted) setCurrentIndex(null);
+    }, [numbers])
+
     const getBackgroundColor = (idx: number) => {
-        return idx === currentIndex || idx === currentIndex + 1 ? 'red' : 'gray';
+        if (currentIndex === null) {
+            return 'green';
+        }
+        return currentIndex.includes(idx) ? 'red' : 'gray';
     }
 
     return (
@@ -39,6 +60,7 @@ export const Sort = () => {
                     return <div key={idx} style={{ backgroundColor: getBackgroundColor(idx), width: '20px', textAlign: 'center', height: num + 'px' }}>{num}</div>
                 })}
             </Box>
+
         </Container>
     )
 }
