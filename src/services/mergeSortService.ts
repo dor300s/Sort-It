@@ -37,6 +37,12 @@ export const mergeSort = async (arr: number[], start: number, end: number, cb: F
 
         }
         cb([...arr])
+
+        stopCb((prev: boolean) => {
+            running = prev;
+            return prev;
+        })
+        if (!running) return 'exit';
     }
 
     while (j < end) {
@@ -44,6 +50,12 @@ export const mergeSort = async (arr: number[], start: number, end: number, cb: F
         arr[k++] = newArr[j++]
         idxCb([k, i])
         cb([...arr])
+
+        stopCb((prev: boolean) => {
+            running = prev;
+            return prev;
+        })
+        if (!running) return 'exit';
     }
 
     while (i < middleIdx) {
@@ -51,6 +63,12 @@ export const mergeSort = async (arr: number[], start: number, end: number, cb: F
         arr[k++] = newArr[i++]
         idxCb([k, j])
         cb([...arr])
+
+        stopCb((prev: boolean) => {
+            running = prev;
+            return prev;
+        })
+        if (!running) return 'exit';
     }
 
 }

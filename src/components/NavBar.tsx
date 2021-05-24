@@ -9,7 +9,7 @@ export const NavBar = () => {
     return (
         <>
             <CssBaseline />
-            <AppBar position="relative" >
+            <AppBar position="relative" style={{marginBottom: '2rem'}}>
                 <Toolbar>
                     <Logo />
                     <Container>

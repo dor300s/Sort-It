@@ -6,7 +6,7 @@ import { quickSort } from '../services/quickSortService';
 import { mergeSort } from '../services/mergeSortService';
 import { heapSort } from '../services/heapSortService';
 import { SortType } from '../types/Sort';
-import { State, StateContext } from '../store/GlobalState';
+import { StateContext } from '../store/GlobalState';
 
 
 
@@ -55,23 +55,49 @@ export const Sort = () => {
 
     const getBackgroundColor = (idx: number) => {
         if (currentIndex === null) {
-            return 'green';
+            return '#33b679';
         }
-        return currentIndex.includes(idx) ? 'red' : 'gray';
+        return currentIndex.includes(idx) ? '#e91e63' : '#616161';
     }
 
     return (
-        <Container maxWidth="xs">
-            <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
-                {state.sortType}
-            </Typography>
-            <Box display="flex" justifyContent="space-between" alignItems="flex-end">
-                {numbers.map((num, idx) => {
-                    return <div key={idx} style={{ backgroundColor: getBackgroundColor(idx), width: '20px', textAlign: 'center', height: num + 'px' }}>{num}</div>
-                })}
-            </Box>
+        <>
+            <CssBaseline />
 
-        </Container>
+            <Container maxWidth="xs">
+                <Typography variant="h2" align="center" color="textPrimary" style={{ marginBottom: '100px' }}>
+                    {state.sortType}
+                </Typography>
+                <Box display="flex" justifyContent="center" alignItems="flex-end" style={{ height: '550px' }} >
+                    {numbers.map((num, idx) => {
+                        return (
+                            <div
+                                key={idx}
+                                style={{
+                                    position: 'relative',
+                                    backgroundColor: getBackgroundColor(idx),
+                                    margin: '0 2px',
+                                    minWidth: '20px',
+                                    textAlign: 'center',
+                                    height: num + 'px',
+                                    borderRadius: '2.5rem 2.5rem 0 0'
+                                }}>
+                                <span
+                                    style={{
+                                        position: 'absolute',
+                                        transform: `translate(-50%,-20px)`,
+                                        fontSize: '.7rem'
+                                    }}
+                                >
+                                    {num}
+                                </span>
+                            </div>
+                        )
+                    })}
+                </Box>
+
+            </Container>
+        </>
     )
 }
 
