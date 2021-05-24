@@ -1,0 +1,1 @@
+export type SortType = 'Bubble Sort' | 'Merge Sort' | 'Quick Sort';

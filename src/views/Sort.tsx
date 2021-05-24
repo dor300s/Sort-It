@@ -1,47 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Box, CssBaseline, Typography } from '@material-ui/core';
 import { bubbleSort } from '../services/bubbleSortService';
 import { generateNumbers } from '../services/generateNumbersService';
 import { quickSort } from '../services/quickSortService';
 import { mergeSort } from '../services/mergeSortService';
 import { heapSort } from '../services/heapSortService';
-import { promises } from 'dns';
-import { JsxEmit } from 'typescript';
+import { SortType } from '../types/Sort';
+import { State, StateContext } from '../store/GlobalState';
 
-
-// const nums = generateNumbers(10)
-// console.log(nums);
-// console.log(quickSort(nums));
-// console.log(heapSort(nums));
-
-const sortType = 'Bubble Sort';
 
 
 export const Sort = () => {
-    const [numbers, setNumbers] = useState<number[]>(generateNumbers(50));
-    // const [numbers, setNumbers] = useState<number[]>([5, 3, 7, 12, 2, 8, 4]);
+    const [state, setState] = useContext(StateContext);
+    const [numbers, setNumbers] = useState<number[]>(state.numbers);
     const [sorted, setSorted] = useState<string>();
-    const [currentIndex, setCurrentIndex] = useState<number[] | null>([0]);
+    const [currentIndex, setCurrentIndex] = useState<number[] | null>([-1]);
+
 
     useEffect(() => {
-        console.log(numbers);
-        setSorted(JSON.stringify([...numbers].sort((a, b) => a - b)));
-
-        // bubbleSort(setNumbers, setCurrentIndex, 5);
-        // quickSort(numbers, 0, numbers.length - 1, setNumbers, setCurrentIndex, 50)
-        mergeSort(numbers, 0, numbers.length, setNumbers, setCurrentIndex, 50);
-
-
-        // [...Array(100)].forEach(() => {
-        //     const numbers = generateNumbers(30);
-        //     console.log(JSON.stringify(mergeSort(numbers, 0, numbers.length, setNumbers, setCurrentIndex, 100)) === JSON.stringify(numbers.sort((a, b) => a - b)))
-        // });
-
-    }, [])
+        setNumbers([...state.numbers]);
+        setSorted(JSON.stringify([...state.numbers].sort((a, b) => a - b)));
+        setCurrentIndex([-1]);
+    }, [state.numbers])
 
     useEffect(() => {
-        if (JSON.stringify(numbers) === sorted) setCurrentIndex(null);
-    }, [numbers])
+        if (state.isRunning) {
+            switch (state.sortType) {
+                case 'Bubble Sort':
+                    bubbleSort(setNumbers, setCurrentIndex, state.speed, state.setIsRunning);
+                    break;
+                case 'Merge Sort':
+                    mergeSort(numbers, 0, numbers.length, setNumbers, setCurrentIndex, state.speed, state.setIsRunning);
+                    break;
+                case 'Quick Sort':
+                    quickSort(numbers, 0, numbers.length - 1, setNumbers, setCurrentIndex, state.speed, state.setIsRunning);
+                    break;
+
+                default:
+                    bubbleSort(setNumbers, setCurrentIndex, state.speed, state.setIsRunning);
+                    break;
+            }
+        }
+    }, [state.isRunning])
+
+
+    useEffect(() => {
+        if (JSON.stringify(numbers) === sorted) {
+            setCurrentIndex(null);
+            state.setIsRunning(false);
+        }
+    }, [numbers, sorted])
+
+
 
     const getBackgroundColor = (idx: number) => {
         if (currentIndex === null) {
@@ -53,7 +63,7 @@ export const Sort = () => {
     return (
         <Container maxWidth="xs">
             <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
-                {sortType}
+                {state.sortType}
             </Typography>
             <Box display="flex" justifyContent="space-between" alignItems="flex-end">
                 {numbers.map((num, idx) => {
@@ -64,3 +74,12 @@ export const Sort = () => {
         </Container>
     )
 }
+
+
+
+// TESTS
+
+  // [...Array(100)].forEach(() => {
+        //     const numbers = generateNumbers(30);
+        //     console.log(JSON.stringify(mergeSort(numbers, 0, numbers.length, setNumbers, setCurrentIndex, 100)) === JSON.stringify(numbers.sort((a, b) => a - b)))
+        // });

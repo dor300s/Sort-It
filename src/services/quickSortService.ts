@@ -11,7 +11,14 @@ import { timeout } from "./timeoutService";
 // }
 
 
-export const quickSort = async (arr: number[], start: number, end: number, cb: Function, idxCb: Function, time: number) => {
+export const quickSort = async (arr: number[], start: number, end: number, cb: Function, idxCb: Function, time: number, stopCb: Function) => {
+
+    let running = true;
+    stopCb((prev: boolean) => {
+        running = prev;
+        return prev;
+    })
+    if (!running) return;
 
     await timeout(time);
 
@@ -35,11 +42,11 @@ export const quickSort = async (arr: number[], start: number, end: number, cb: F
 
     [arr[end], arr[pvIdx]] = [arr[pvIdx], arr[end]];
 
-    cb(arr);
+    cb([...arr]);
 
     Promise.all([
-        quickSort(arr, start, pvIdx - 1, cb, idxCb, time),
-        quickSort(arr, pvIdx + 1, end, cb, idxCb, time)
+        quickSort(arr, start, pvIdx - 1, cb, idxCb, time, stopCb),
+        quickSort(arr, pvIdx + 1, end, cb, idxCb, time, stopCb)
     ])
 
     // return arr;

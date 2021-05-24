@@ -1,15 +1,22 @@
 import { timeout } from "./timeoutService";
 
-export const mergeSort = async (arr: number[], start: number, end: number, cb: Function, idxCb: Function, time: number) => {
-
+export const mergeSort = async (arr: number[], start: number, end: number, cb: Function, idxCb: Function, time: number, stopCb: Function) => {
+    let running = true;
+    stopCb((prev: boolean) => {
+        running = prev;
+        return prev;
+    })
+    if (!running) return 'exit';
     // await timeout(time);
 
     if (end - start <= 1) return;
     const middleIdx: number = Math.floor((start + end) / 2);
 
     // Promise.all([
-    await mergeSort(arr, start, middleIdx, cb, idxCb, time)
-    await mergeSort(arr, middleIdx, end, cb, idxCb, time)
+    const firstHalf = await mergeSort(arr, start, middleIdx, cb, idxCb, time, stopCb)
+    if(firstHalf === 'exit') return 'exit';
+    const secondHalf = await mergeSort(arr, middleIdx, end, cb, idxCb, time, stopCb)
+    if(secondHalf === 'exit') return 'exit';
     // ])
 
     const newArr = [...arr];
